@@ -4,7 +4,9 @@ import optparse
 from optparse import OptionParser
 import os
 import sys
+from zipfile import ZipFile
 import helper
+from libcrowdin import CrowdinAPI
 
 parser = OptionParser()
 
@@ -28,7 +30,7 @@ parser.add_option("-a", "--action",
 
 
 testArgs = ["-p", "foo.txt"]
-(options, args) = parser.parse_args(testArgs)
+(options, args) = parser.parse_args()
 
 if options.path is None:
     args = ["-h"]
@@ -47,9 +49,6 @@ except:
                     projectidentifier = my-project-name
         You will need to fill the values from the API tab on your Crowdin project page"""
     sys.exit(1)
-
-
-
 
 print "Evaluating", options.path
 
@@ -77,7 +76,18 @@ elif isFile:
 languageCode = helper.getLanguageCodeFromPath(options.path)
 print "Language:", languageCode
 
-# Now download all from Crowdin
+# Build new package on Crowdin
+lc = CrowdinAPI(apiKey, projectIdentifier)
+lc.ExportTranslations()
+
+# Download all from Crowdin
+zipPath = lc.DownloadLanguagesZip("all")
+print "Downloaded to", zipPath
+
+zip = ZipFile(zipPath[0])
+extractDir = os.path.join(os.path.dirname(zipPath[0]), "Crowdin")
+zip.extractall(extractDir)
+print "Extracted to", extractDir
 
 
 
