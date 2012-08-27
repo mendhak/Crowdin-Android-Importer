@@ -1,5 +1,4 @@
 #!/usr/lib/env python
-import ConfigParser
 import filecmp
 import optparse
 from optparse import OptionParser
@@ -13,15 +12,15 @@ from libcrowdin import CrowdinAPI
 parser = OptionParser()
 
 optparse.OptionParser.format_epilog = lambda self, formatter: self.epilog
-parser = optparse.OptionParser(usage = "usage: %prog --path=PATH [--action=(get|upload)]", epilog="""
+parser = optparse.OptionParser(usage = "usage: %prog --p=PATH -a=get|upload -i my-crowdin-project -k 1234567", epilog="""
 Examples:
-    crowdin.py --path=/projectname/res/
+    crowdin.py --path=/projectname/res/ -i my-crowdin-project -k 1234567
                         (Gets all translations from Crowdin. 'get' is implied)
-    crowdin.py --path=/projectname/res/values-fr --action=get
+    crowdin.py --path=/projectname/res/values-fr --action=get -i my-crowdin-project -k 1234567
                         (Gets French translations from Crowdin)
-    crowdin.py --path=/projectname/res/values-fr/strings.xml --action=get
+    crowdin.py --path=/projectname/res/values-fr/strings.xml --action=get -i my-crowdin-project -k 1234567
                         (Gets French translations from Crowdin)
-    crowdin.py --path=/projectname/res/values/strings.xml --action=upload
+    crowdin.py --path=/projectname/res/values/strings.xml --action=upload -i my-crowdin-project -k 1234567
                         (Replaces strings.xml on Crowdin. Use with caution.)
 """)
 
@@ -29,28 +28,22 @@ parser.add_option("-p", "--path",
                   action="store", type="string", dest="path", help="The path to the file or directory of Android strings")
 parser.add_option("-a", "--action",
                   action="store", type="string", dest="action", default="get", help="get or upload")
+parser.add_option("-i", "--identifier",
+                  action="store", type="string", dest="identifier", help="The Crowdin project identifier")
+parser.add_option("-k", "--apikey",
+                  action="store", type="string", dest="apikey", help="The Crowdin project API key")
 
 
-testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res/values/strings.xml", "-a", "update"]
+testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res/values/strings.xml", "-i", "identifier", "-k", "123456"]
 (options, args) = parser.parse_args()
 
-if options.path is None:
+if options.path is None or options.identifier is None or options.apikey is None:
     args = ["-h"]
     parser.parse_args(args)
 
-try:
-    config = ConfigParser.RawConfigParser()
-    config.read('crowdin.cfg')
-    apiKey = config.get('Crowdin', 'apikey')
-    projectIdentifier = config.get('Crowdin', 'projectidentifier')
-except:
-    print """
-        Missing config file, please create crowdin.cfg with the contents:
-                    [Crowdin]
-                    apikey = 123412341234
-                    projectidentifier = my-project-name
-        You will need to fill the values from the API tab on your Crowdin project page"""
-    sys.exit(1)
+
+apiKey = options.apikey
+projectIdentifier = options.identifier
 
 print "Evaluating", options.path
 
