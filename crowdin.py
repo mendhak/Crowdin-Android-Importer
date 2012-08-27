@@ -76,6 +76,7 @@ if options.action == "update":
 
     lc = CrowdinAPI(apiKey, projectIdentifier)
     lc.UploadTranslationFile(pathToStringsXml)
+    print "Upload complete"
 
 else:
     #Default is get

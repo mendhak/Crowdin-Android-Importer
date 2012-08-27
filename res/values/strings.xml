@@ -4,5 +4,6 @@
   <string name="app_name">GPSLogger</string>
   <string name="settings_screen_name">GPSLogger Settings</string>
   <string name="ok">OK</string>
+  <string name="phone_number">Phone Number:</string>
 
 </resources>
