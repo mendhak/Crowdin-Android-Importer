@@ -1,5 +1,6 @@
 #!/usr/lib/env python
 import ConfigParser
+import filecmp
 import optparse
 from optparse import OptionParser
 import os
@@ -30,7 +31,7 @@ parser.add_option("-a", "--action",
                   action="store", type="string", dest="action", default="get", help="get or upload")
 
 
-testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res/values-fr"]
+testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res"]
 (options, args) = parser.parse_args()
 
 if options.path is None:
@@ -99,7 +100,7 @@ crowdinMappings = helper.GetCrowdinMappings(extractDir)
 
 #Get list of files to copy
 matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings, not isSingleFolderUpdate)
-print matchingFiles
+
 
 #Get res directory
 targetResDirectory = helper.GetResDirectory(options.path)
@@ -111,10 +112,17 @@ if not len(matchingFiles):
 for k,v in matchingFiles.iteritems():
     targetStringsXml = helper.GetTargetStringsXml(targetResDirectory, k)
 
-    print "Replacing", targetStringsXml
     if not os.path.exists(os.path.dirname(targetStringsXml)):
            os.makedirs(os.path.dirname(targetStringsXml))
-    shutil.copy(matchingFiles[k], targetStringsXml)
+
+    try:
+        if not os.path.exists(targetStringsXml) or not filecmp.cmp(matchingFiles[k], targetStringsXml):
+            print "Replacing", targetStringsXml
+            shutil.copy(matchingFiles[k], targetStringsXml)
+        else:
+            print "Skipping", targetStringsXml, ", it is already up to date"
+    except:
+        print "Error. No Crowdin file for ", targetStringsXml
 
 print "Deleting", extractDir
 shutil.rmtree(extractDir)
@@ -122,50 +130,3 @@ shutil.rmtree(extractDir)
 print "Deleting", zipPath[0]
 os.remove(zipPath[0])
 
-
-
-"""
-For each languageCode
-    If languageCode = 'ab-CD'
-        crowdinMapping['ab-CD']
-        or
-        crowdinMapping['ab']
-        or
-        crowdinMapping['ab-AB']
-        or
-        crowdinMapping key contains 'ab' 'ab-XY'
-            return list ('ab-CD',mapping['ab-XY'])
-
-"""
-
-"""
-
-Check dir or file exists
-
-/home/mendhak/Code/gpslogger/GPSLogger/res/, GET
-    Export Translations (http://crowdin.net/page/api/export)
-    Download zip (http://crowdin.net/page/api/download)
-    Unzip
-    Mapping of Crowdin to Android
-    Copy strings.xml to mapped folders
-
-
-/home/mendhak/Code/gpslogger/GPSLogger/res/values-ja, GET
-    Export Translations (http://crowdin.net/page/api/export)
-    Download zip (http://crowdin.net/page/api/download)
-    Unzip
-    Mapping of values-ja to Crowdin Folders
-    Copy strings.xml to values-ja
-
-
-
-
-
-
-
-
-
-
-
-
-"""
