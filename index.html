@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Crowdin to Android Importer and Updater by mendhak</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Crowdin to Android Importer and Updater</h1>
+          <h2>Python script to download translated language files from Crowdin.net and update main files too.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/mendhak/Crowdin-Android-Importer/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/mendhak/Crowdin-Android-Importer/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/mendhak/Crowdin-Android-Importer" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>Crowdin to Android Importer</h1>
+
+<p>This Python script can be used from IntelliJ's External Tools or from the commandline to</p>
+
+<ul>
+<li>Get the latest Crowdin translations, replace matching localized strings.xml files in your Android project.</li>
+<li>Update the main translations file on Crowdin from your project's main strings.xml file.</li>
+</ul><p><img src="http://farm8.staticflickr.com/7250/7875580250_05f1436cbc_z.jpg" alt="Context Menu"></p>
+
+<h1><strong>Download</strong></h1>
+
+<p>Get the latest version of the code</p>
+
+<pre><code>git clone git://github.com/mendhak/Crowdin-Android-Importer.git
+</code></pre>
+
+<p>This will create a folder and copy the necessary files into it.</p>
+
+<h1><strong>Crowdin API Key and Identifier</strong></h1>
+
+<p>You will also need your project specific API key and identifier from Crowdin.</p>
+
+<p><img src="http://farm9.staticflickr.com/8431/7875580774_98a00b7f06_c.jpg" alt="Crowdin project settings"></p>
+
+<h1><strong>Command Line Usage</strong></h1>
+
+<pre><code>crowdin.py --p=PATH -a=get|upload -i my-crowdin-project -k 1234567
+</code></pre>
+
+<p><strong>-h, --help</strong></p>
+
+<p>Shows the help message and usage</p>
+
+<p><strong>-p PATH, --path=PATH</strong></p>
+
+<p>The path to an individual strings.xml or a directory containing your strings.xml.  It can even be the root of the project.</p>
+
+<p><strong>-a ACTION, --action=ACTION</strong></p>
+
+<p>Either <code>get</code> or <code>update</code>, without quotes.  <code>get</code> is the default value and any value aside from <code>update</code> is assumed to be <code>get</code></p>
+
+<p><strong>-i IDENTIFIER, --identifier=IDENTIFIER</strong></p>
+
+<p>The Crowdin project identifier, available under the API tab on your Crowdin Project's settings pages.</p>
+
+<p><strong>-k APIKEY, --apikey=APIKEY</strong></p>
+
+<p>The Crowdin project API key, available under the API tab on your Crowdin Project's settings pages.</p>
+
+<h1><strong>IntelliJ IDEA Instructions</strong></h1>
+
+<p>Click File &gt; Settings...</p>
+
+<p>Find External Tools and click the + to add a new tool.</p>
+
+<p><strong>Get Crowdin Translations</strong></p>
+
+<p><img src="http://farm9.staticflickr.com/8296/7875580586_7ce0b7b848_c.jpg" alt="IntelliJ External Tools"></p>
+
+<p>Program: <code>python</code></p>
+
+<p>Parameters: <code>crowdin.py -p $FilePath$ -k b2b6e1b0672a280a37d66ec405d378e5 -i testing-the-api</code></p>
+
+<p>Working directory: <code>/home/mendhak/Code/Crowdin-Android-Importer/</code></p>
+
+<p>The working directory is the path to where you downloaded the importer script.  Replace the API Key and Identifier with your own values.</p>
+
+<p><strong>Update Crowdin Translation</strong></p>
+
+<p><img src="http://farm9.staticflickr.com/8284/7875580410_d9b5d3eaca_c.jpg" alt="IntelliJ External Tools"></p>
+
+<p>Program: <code>python</code></p>
+
+<p>Parameters: <code>crowdin.py -p -a update $FilePath$ -k b2b6e1b0672a280a37d66ec405d378e5 -i testing-the-api</code></p>
+
+<p>Working directory: <code>/home/mendhak/Code/Crowdin-Android-Importer/</code></p>
+
+<p>The working directory is the path to where you downloaded the importer script.  Replace the API Key and Identifier with your own values.</p>
+
+<p><strong>Context menu</strong></p>
+
+<p>The IntelliJ context menu will now show the two tools you have added above.</p>
+
+<p><img src="http://farm8.staticflickr.com/7250/7875580250_05f1436cbc_z.jpg" alt="Context Menu"></p>
+
+<p>The tools are path sensitive.</p>
+
+<p>If you click the 'Get Crowdin Translations' tool from the project root or res directories, the tool will get and apply all translations from Crowdin.</p>
+
+<p>If you click the 'Get Crowdin Translations' from a specific strings.xml (ex:/projectroot/res/values-pt/strings.xml), the tool will only get the translation for that particular language.</p>
+
+<p>The output will be visible at the bottom of your IntelliJ IDE.</p>
+
+<p><img src="http://farm9.staticflickr.com/8281/7875579824_55b63b1bf6_c.jpg" alt="Output"></p>
+        </section>
+
+        <footer>
+          Crowdin to Android Importer and Updater is maintained by <a href="https://github.com/mendhak">mendhak</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
