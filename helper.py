@@ -45,4 +45,11 @@ def getLanguageCodeFromPath(path):
     return androidLanguageCode
 
 
-
+def GetCrowdinMappings(extractDir, fileName="strings.xml"):
+    mappingDict = {}
+    for d in os.listdir(extractDir):
+        if os.path.isdir(os.path.join(extractDir, d)):
+            stringsXml = locate(fileName,os.path.join(extractDir,d))
+            if os.path.getsize(stringsXml) > 84:
+                mappingDict[d] = stringsXml
+    return mappingDict

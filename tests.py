@@ -63,3 +63,4 @@ class BasicTests(unittest.TestCase):
         languageCode = helper.getLanguageCodeFromPath("/res/")
         self.assertEqual(languageCode, "all")
 
+

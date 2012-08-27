@@ -77,6 +77,7 @@ languageCode = helper.getLanguageCodeFromPath(options.path)
 print "Language:", languageCode
 
 # Build new package on Crowdin
+print "Rebuilding latest package on Crowdin"
 lc = CrowdinAPI(apiKey, projectIdentifier)
 lc.ExportTranslations()
 
@@ -84,12 +85,22 @@ lc.ExportTranslations()
 zipPath = lc.DownloadLanguagesZip("all")
 print "Downloaded to", zipPath
 
+#Extract to /tmp/Crowdin
 zip = ZipFile(zipPath[0])
 extractDir = os.path.join(os.path.dirname(zipPath[0]), "Crowdin")
 zip.extractall(extractDir)
 print "Extracted to", extractDir
 
+"""
+For each folder in extractDir
+    if strings.xml > 84b
+        Add to dictionary [CrowdinLangCode : path/to/strings.xml]
 
+Return dictionary
+"""
+
+#Get Crowdin folder mappings
+crowdinMapping = helper.GetCrowdinMappings(extractDir)
 
 """
 
