@@ -73,8 +73,8 @@ elif isFile:
         print "Not a valid Android resource file"
         sys.exit(1)
 
-languageCode = helper.getLanguageCodeFromPath(options.path)
-print "Language:", languageCode
+languageCodes = helper.GetLanguageCodesFromPath(options.path)
+print "Language:", languageCodes
 
 # Build new package on Crowdin
 print "Rebuilding latest package on Crowdin"
@@ -91,16 +91,30 @@ extractDir = os.path.join(os.path.dirname(zipPath[0]), "Crowdin")
 zip.extractall(extractDir)
 print "Extracted to", extractDir
 
-"""
-For each folder in extractDir
-    if strings.xml > 84b
-        Add to dictionary [CrowdinLangCode : path/to/strings.xml]
+#Get valid Crowdin folder mappings
+crowdinMappings = helper.GetCrowdinMappings(extractDir)
 
-Return dictionary
-"""
+#Get list of files to copy
+matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings)
 
-#Get Crowdin folder mappings
-crowdinMapping = helper.GetCrowdinMappings(extractDir)
+
+
+
+
+
+"""
+For each languageCode
+    If languageCode = 'ab-CD'
+        crowdinMapping['ab-CD']
+        or
+        crowdinMapping['ab']
+        or
+        crowdinMapping['ab-AB']
+        or
+        crowdinMapping key contains 'ab' 'ab-XY'
+            return list ('ab-CD',mapping['ab-XY'])
+
+"""
 
 """
 
