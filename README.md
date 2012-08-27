@@ -31,18 +31,26 @@ You will also need your project specific API key and identifier from Crowdin.
     crowdin.py --p=PATH -a=get|upload -i my-crowdin-project -k 1234567
 
 **-h, --help**
+
 Shows the help message and usage
 
+
 **-p PATH, --path=PATH**
+
 The path to an individual strings.xml or a directory containing your strings.xml.  It can even be the root of the project.
 
+
 **-a ACTION, --action=ACTION**
+
 Either `get` or `update`, without quotes.  `get` is the default value and any value aside from `update` is assumed to be `get`
 
 **-i IDENTIFIER, --identifier=IDENTIFIER**
+
 The Crowdin project identifier, available under the API tab on your Crowdin Project's settings pages.
 
+
 **-k APIKEY, --apikey=APIKEY**
+
 The Crowdin project API key, available under the API tab on your Crowdin Project's settings pages.
 
 
@@ -62,8 +70,11 @@ Find External Tools and click the + to add a new tool.
 ![IntelliJ External Tools](http://farm9.staticflickr.com/8296/7875580586_7ce0b7b848_c.jpg)
 
 Program: `python`
+
 Parameters: `crowdin.py -p $FilePath$ -k b2b6e1b0672a280a37d66ec405d378e5 -i testing-the-api`
+
 Working directory: `/home/mendhak/Code/Crowdin-Android-Importer/`
+
 
 The working directory is the path to where you downloaded the importer script.  Replace the API Key and Identifier with your own values.
 
@@ -72,8 +83,11 @@ The working directory is the path to where you downloaded the importer script.  
 ![IntelliJ External Tools](http://farm9.staticflickr.com/8284/7875580410_d9b5d3eaca_c.jpg)
 
 Program: `python`
+
 Parameters: `crowdin.py -p -a update $FilePath$ -k b2b6e1b0672a280a37d66ec405d378e5 -i testing-the-api`
+
 Working directory: `/home/mendhak/Code/Crowdin-Android-Importer/`
+
 
 The working directory is the path to where you downloaded the importer script.  Replace the API Key and Identifier with your own values.
 
