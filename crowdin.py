@@ -33,6 +33,8 @@ if options.path is None:
     args = ["-h"]
     parser.parse_args(args)
 
+print "Evaluating", options.path
+
 if not os.path.exists(options.path):
     print "Path not found: " + options.path
     sys.exit(1)
@@ -47,7 +49,18 @@ if isDirectory:
         print "Not a valid Android resources directory"
         sys.exit(1)
 
-    languageCode = helper.getLanguageCodeFromPath(options.path)
+elif isFile:
+    pathToStringsXml = options.path
+
+    if not helper.isValidAndroidResourcePath(pathToStringsXml):
+        print "Not a valid Android resource file"
+        sys.exit(1)
+
+languageCode = helper.getLanguageCodeFromPath(options.path)
+print "Language:", languageCode
+
+
+
 
 
 

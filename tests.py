@@ -62,3 +62,4 @@ class BasicTests(unittest.TestCase):
     def test_getLanguageCodeFromAndroidPath_PathDoesNotContainValues_ReturnsAll(self):
             languageCode = helper.getLanguageCodeFromPath("/res/")
             self.assertEqual(languageCode, "all")
+
