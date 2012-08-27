@@ -1,4 +1,5 @@
 #!/usr/lib/env python
+import ConfigParser
 import optparse
 from optparse import OptionParser
 import os
@@ -27,11 +28,28 @@ parser.add_option("-a", "--action",
 
 
 testArgs = ["-p", "foo.txt"]
-(options, args) = parser.parse_args()
+(options, args) = parser.parse_args(testArgs)
 
 if options.path is None:
     args = ["-h"]
     parser.parse_args(args)
+
+try:
+    config = ConfigParser.RawConfigParser()
+    config.read('crowdin.cfg')
+    apiKey = config.get('Crowdin', 'apikey')
+    projectIdentifier = config.get('Crowdin', 'projectidentifier')
+except:
+    print """
+        Missing config file, please create crowdin.cfg with the contents:
+                    [Crowdin]
+                    apikey = 123412341234
+                    projectidentifier = my-project-name
+        You will need to fill the values from the API tab on your Crowdin project page"""
+    sys.exit(1)
+
+
+
 
 print "Evaluating", options.path
 
@@ -59,8 +77,7 @@ elif isFile:
 languageCode = helper.getLanguageCodeFromPath(options.path)
 print "Language:", languageCode
 
-
-
+# Now download all from Crowdin
 
 
 

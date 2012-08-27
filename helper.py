@@ -45,5 +45,4 @@ def getLanguageCodeFromPath(path):
     return androidLanguageCode
 
 
-def getTargetDirectoryPath(pathToStringsXml, languageCode):
-    return None
+

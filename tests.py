@@ -52,14 +52,14 @@ class BasicTests(unittest.TestCase):
         self.assertEqual(languageCode, "fr")
 
     def test_getLanguageCodeFromAndroidPath_PathFRUPPERCASE_ReturnsFrench(self):
-            languageCode = helper.getLanguageCodeFromPath("/res/values-FR")
-            self.assertEqual(languageCode, "fr")
+        languageCode = helper.getLanguageCodeFromPath("/res/values-FR")
+        self.assertEqual(languageCode, "fr")
 
     def test_getLanguageCodeFromAndroidPath_PathPTRBR_ReturnsPortugueseBrazil(self):
-            languageCode = helper.getLanguageCodeFromPath("/res/values-pt-rBR/")
-            self.assertEqual(languageCode, "pt-BR")
+        languageCode = helper.getLanguageCodeFromPath("/res/values-pt-rBR/")
+        self.assertEqual(languageCode, "pt-BR")
 
     def test_getLanguageCodeFromAndroidPath_PathDoesNotContainValues_ReturnsAll(self):
-            languageCode = helper.getLanguageCodeFromPath("/res/")
-            self.assertEqual(languageCode, "all")
+        languageCode = helper.getLanguageCodeFromPath("/res/")
+        self.assertEqual(languageCode, "all")
 
