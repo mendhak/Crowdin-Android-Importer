@@ -1,11 +1,17 @@
 import os
 import re
 
-def locate(fileName, rootDirectory=os.curdir):
+def locateFile(fileName, rootDirectory=os.curdir):
     for path,directories,files in os.walk(rootDirectory):
         for file in files:
             if file.lower() == fileName.lower():
                  return os.path.join(path,file)
+
+def locateDir(dirName, rootDirectory=os.curdir):
+    for path,directories,files in os.walk(rootDirectory):
+        for d in directories:
+            if d.lower() == dirName.lower():
+                 return os.path.join(path,d)
 
 
 def isValidAndroidResourcePath(pathToStringsXml):
@@ -51,30 +57,66 @@ def GetCrowdinMappings(extractDir, fileName="strings.xml"):
     mappingDict = {}
     for d in os.listdir(extractDir):
         if os.path.isdir(os.path.join(extractDir, d)):
-            stringsXml = locate(fileName,os.path.join(extractDir,d))
+            stringsXml = locateFile(fileName,os.path.join(extractDir,d))
             if os.path.getsize(stringsXml) > 84:
                 mappingDict[d] = stringsXml
     return mappingDict
 
 
-def GetMatchingCrowdinFiles(languageCodes, crowdinMappings):
+def GetMatchingCrowdinFiles(languageCodes, crowdinMappings, includeNewFolders=False):
     mappingDict = {}
+    #Map existing languageCodes
     for lc in languageCodes:
 
         if lc in crowdinMappings:
             #Direct match
             mappingDict[lc] = crowdinMappings[lc]
+            crowdinMappings[lc] = None
         else:
             country = lc[0:2]
-            variant = lc[4:]
             basicVariant = country + "-" + country.upper()
             if basicVariant in crowdinMappings:
                 #Doubled name variant, such as es-ES, pt-PT
                 mappingDict[lc] = crowdinMappings[basicVariant]
+                crowdinMappings[basicVariant] = None
             else:
                 #First match on country
                 for k,v in crowdinMappings.iteritems():
                     if k.startswith(country):
                         mappingDict[lc] = crowdinMappings[k]
+                        crowdinMappings[k] = None
+                        break
+
+    if includeNewFolders:
+    #Map new languageCodes FROM Crowdin
+        for k,v in crowdinMappings.iteritems():
+            if v is not None:
+                mappingDict[k] = v
+
 
     return mappingDict
+
+
+def GetResDirectory(path):
+    if "/res" not in path:
+        return locateDir("res", path)
+    else:
+        resPosition = path.find("/res")
+        if resPosition > -1:
+            return path[0:path.find("/res")+4]
+
+
+def GetTargetStringsXml(targetResDirectory, langCode):
+    country = langCode[0:2]
+    variant = langCode[3:]
+    if variant is not None and len(variant) > 0:
+        variant = "-r" + variant
+
+    return os.path.join(targetResDirectory, "values-" + country + variant , "strings.xml")
+
+
+def IsSingleFolderUpdate(path):
+    if "/values" in path.lower():
+        return True
+
+    return False

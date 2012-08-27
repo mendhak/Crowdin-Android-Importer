@@ -3,6 +3,7 @@ import ConfigParser
 import optparse
 from optparse import OptionParser
 import os
+import shutil
 import sys
 from zipfile import ZipFile
 import helper
@@ -29,7 +30,7 @@ parser.add_option("-a", "--action",
                   action="store", type="string", dest="action", default="get", help="get or upload")
 
 
-testArgs = ["-p", "foo.txt"]
+testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res/values-fr"]
 (options, args) = parser.parse_args()
 
 if options.path is None:
@@ -58,9 +59,10 @@ if not os.path.exists(options.path):
 
 isDirectory = os.path.isdir(options.path)
 isFile = os.path.isfile(options.path)
+isSingleFolderUpdate = helper.IsSingleFolderUpdate(options.path)
 
 if isDirectory:
-    pathToStringsXml = helper.locate("strings.xml", options.path)
+    pathToStringsXml = helper.locateFile("strings.xml", options.path)
 
     if not helper.isValidAndroidResourcePath(pathToStringsXml):
         print "Not a valid Android resources directory"
@@ -83,7 +85,7 @@ lc.ExportTranslations()
 
 # Download all from Crowdin
 zipPath = lc.DownloadLanguagesZip("all")
-print "Downloaded to", zipPath
+print "Downloaded to", zipPath[0]
 
 #Extract to /tmp/Crowdin
 zip = ZipFile(zipPath[0])
@@ -91,14 +93,34 @@ extractDir = os.path.join(os.path.dirname(zipPath[0]), "Crowdin")
 zip.extractall(extractDir)
 print "Extracted to", extractDir
 
+print "Attempting to match Crowdin files with Android"
 #Get valid Crowdin folder mappings
 crowdinMappings = helper.GetCrowdinMappings(extractDir)
 
 #Get list of files to copy
-matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings)
+matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings, not isSingleFolderUpdate)
+print matchingFiles
 
+#Get res directory
+targetResDirectory = helper.GetResDirectory(options.path)
 
+#Copy the files
+if not len(matchingFiles):
+    print "No matching files found"
 
+for k,v in matchingFiles.iteritems():
+    targetStringsXml = helper.GetTargetStringsXml(targetResDirectory, k)
+
+    print "Replacing", targetStringsXml
+    if not os.path.exists(os.path.dirname(targetStringsXml)):
+           os.makedirs(os.path.dirname(targetStringsXml))
+    shutil.copy(matchingFiles[k], targetStringsXml)
+
+print "Deleting", extractDir
+shutil.rmtree(extractDir)
+
+print "Deleting", zipPath[0]
+os.remove(zipPath[0])
 
 
 
