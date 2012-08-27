@@ -31,7 +31,7 @@ parser.add_option("-a", "--action",
                   action="store", type="string", dest="action", default="get", help="get or upload")
 
 
-testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res"]
+testArgs = ["-p", "/home/mendhak/Code/Crowdin-Android-Importer/res/values/strings.xml", "-a", "update"]
 (options, args) = parser.parse_args()
 
 if options.path is None:
@@ -60,7 +60,6 @@ if not os.path.exists(options.path):
 
 isDirectory = os.path.isdir(options.path)
 isFile = os.path.isfile(options.path)
-isSingleFolderUpdate = helper.IsSingleFolderUpdate(options.path)
 
 if isDirectory:
     pathToStringsXml = helper.locateFile("strings.xml", options.path)
@@ -76,57 +75,70 @@ elif isFile:
         print "Not a valid Android resource file"
         sys.exit(1)
 
-languageCodes = helper.GetLanguageCodesFromPath(options.path)
-print "Language:", languageCodes
 
-# Build new package on Crowdin
-print "Rebuilding latest package on Crowdin"
-lc = CrowdinAPI(apiKey, projectIdentifier)
-lc.ExportTranslations()
+if options.action == "update":
+    if not helper.IsDefaultStringsXml(pathToStringsXml):
+        print "Please only specify the default '/res/values/strings.xml' for upload"
+        sys.exit(1)
 
-# Download all from Crowdin
-zipPath = lc.DownloadLanguagesZip("all")
-print "Downloaded to", zipPath[0]
+    lc = CrowdinAPI(apiKey, projectIdentifier)
+    lc.UploadTranslationFile(pathToStringsXml)
 
-#Extract to /tmp/Crowdin
-zip = ZipFile(zipPath[0])
-extractDir = os.path.join(os.path.dirname(zipPath[0]), "Crowdin")
-zip.extractall(extractDir)
-print "Extracted to", extractDir
+else:
+    #Default is get
 
-print "Attempting to match Crowdin files with Android"
-#Get valid Crowdin folder mappings
-crowdinMappings = helper.GetCrowdinMappings(extractDir)
+    languageCodes = helper.GetLanguageCodesFromPath(options.path)
+    print "Language:", languageCodes
 
-#Get list of files to copy
-matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings, not isSingleFolderUpdate)
+    # Build new package on Crowdin
+    print "Rebuilding latest package on Crowdin"
+    lc = CrowdinAPI(apiKey, projectIdentifier)
+    lc.ExportTranslations()
+
+    # Download all from Crowdin
+    zipPath = lc.DownloadLanguagesZip("all")
+    print "Downloaded to", zipPath[0]
+
+    #Extract to /tmp/Crowdin
+    zip = ZipFile(zipPath[0])
+    extractDir = os.path.join(os.path.dirname(zipPath[0]), "Crowdin")
+    zip.extractall(extractDir)
+    print "Extracted to", extractDir
+
+    print "Attempting to match Crowdin files with Android"
+    #Get valid Crowdin folder mappings
+    crowdinMappings = helper.GetCrowdinMappings(extractDir)
+
+    #Get list of files to copy
+    isSingleFolderUpdate = helper.IsSingleFolderUpdate(options.path)
+    matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings, not isSingleFolderUpdate)
 
 
-#Get res directory
-targetResDirectory = helper.GetResDirectory(options.path)
+    #Get res directory
+    targetResDirectory = helper.GetResDirectory(options.path)
 
-#Copy the files
-if not len(matchingFiles):
-    print "No matching files found"
+    #Copy the files
+    if not len(matchingFiles):
+        print "No matching files found"
 
-for k,v in matchingFiles.iteritems():
-    targetStringsXml = helper.GetTargetStringsXml(targetResDirectory, k)
+    for k,v in matchingFiles.iteritems():
+        targetStringsXml = helper.GetTargetStringsXml(targetResDirectory, k)
 
-    if not os.path.exists(os.path.dirname(targetStringsXml)):
-           os.makedirs(os.path.dirname(targetStringsXml))
+        if not os.path.exists(os.path.dirname(targetStringsXml)):
+               os.makedirs(os.path.dirname(targetStringsXml))
 
-    try:
-        if not os.path.exists(targetStringsXml) or not filecmp.cmp(matchingFiles[k], targetStringsXml):
-            print "Replacing", targetStringsXml
-            shutil.copy(matchingFiles[k], targetStringsXml)
-        else:
-            print "Skipping", targetStringsXml, ", it is already up to date"
-    except:
-        print "Error. No Crowdin file for ", targetStringsXml
+        try:
+            if not os.path.exists(targetStringsXml) or not filecmp.cmp(matchingFiles[k], targetStringsXml):
+                print "Replacing", targetStringsXml
+                shutil.copy(matchingFiles[k], targetStringsXml)
+            else:
+                print "Skipping", targetStringsXml, ", it is already up to date"
+        except:
+            print "Error. No Crowdin file for ", targetStringsXml
 
-print "Deleting", extractDir
-shutil.rmtree(extractDir)
+    print "Deleting", extractDir
+    shutil.rmtree(extractDir)
 
-print "Deleting", zipPath[0]
-os.remove(zipPath[0])
+    print "Deleting", zipPath[0]
+    os.remove(zipPath[0])
 

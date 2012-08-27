@@ -114,3 +114,11 @@ class BasicTests(unittest.TestCase):
 
     def test_IsSingleFolderUpdate_NoValues_ReturnsFalse(self):
         isSingleFolderUpdate = helper.IsSingleFolderUpdate("/res/values-pt-rPT")
+
+    def test_CheckValidStringsXmlForUpload_ValuesStringsXml(self):
+        path1 = "/home/mendhak/Code/Crowdin-Android-Importer/strings.xml"
+        path2 = "/home/mendhak/Code/Crowdin-Android-Importer/values/strings.xml"
+        path3 = "/home/mendhak/Code/Crowdin-Android-Importer/res/values/strings.xml"
+        self.assertFalse(helper.IsDefaultStringsXml(path1))
+        self.assertFalse(helper.IsDefaultStringsXml(path2))
+        self.assertTrue(helper.IsDefaultStringsXml(path3))

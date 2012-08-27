@@ -120,3 +120,9 @@ def IsSingleFolderUpdate(path):
         return True
 
     return False
+
+
+def IsDefaultStringsXml(path):
+    if "res/values/strings.xml" in path:
+        return True
+    return False
