@@ -103,6 +103,8 @@ If you click the 'Get Crowdin Translations' tool from the project root or res di
 
 If you click the 'Get Crowdin Translations' from a specific strings.xml (ex:/projectroot/res/values-pt/strings.xml), the tool will only get the translation for that particular language.
 
+If you click the 'Update Crowdin Translation' file from any arbitrary path, it will not work.  It will only work when invoked from the main /res/values/strings.xml file. It's for your own safety.
+
 The output will be visible at the bottom of your IntelliJ IDE.
 
 ![Output](http://farm9.staticflickr.com/8281/7875579824_55b63b1bf6_c.jpg)
