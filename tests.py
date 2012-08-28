@@ -82,6 +82,13 @@ class BasicTests(unittest.TestCase):
         matches = helper.GetMatchingCrowdinFiles(lc, cm)
         self.assertEqual(matches['pt'], '/narrowPortuguese')
 
+    def test_GetMatchingCrowdinFiles_NarrowScopeMatchedFirst(self):
+        lc = {'zh-TW' , 'zh'}
+        cm = {  'zh-TW':'/zhtwPath', 'zh-CN': '/zhcnPath'   }
+        matches = helper.GetMatchingCrowdinFiles(lc,cm, True)
+        self.assertEqual('/zhcnPath', matches['zh'])
+
+
     def test_GetMatchingCrowdinFiles_DifferentNarrowScope_ReturnsPathToDifferentNarrowScope(self):
         lc = ['en', 'fr', 'pt', 'es']
         cm = {'fr':'/french', 'pt-PT' : '/narrowPortuguese', 'es-MX' : '/mexicanPath'}

@@ -107,7 +107,6 @@ else:
     isSingleFolderUpdate = helper.IsSingleFolderUpdate(options.path)
     matchingFiles = helper.GetMatchingCrowdinFiles(languageCodes, crowdinMappings, not isSingleFolderUpdate)
 
-
     #Get res directory
     targetResDirectory = helper.GetResDirectory(options.path)
 

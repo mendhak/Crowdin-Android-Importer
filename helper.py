@@ -65,6 +65,8 @@ def GetCrowdinMappings(extractDir, fileName="strings.xml"):
 
 def GetMatchingCrowdinFiles(languageCodes, crowdinMappings, includeNewFolders=False):
     mappingDict = {}
+    languageCodes = sorted(languageCodes, reverse=True)
+
     #Map existing languageCodes
     for lc in languageCodes:
 
@@ -82,7 +84,7 @@ def GetMatchingCrowdinFiles(languageCodes, crowdinMappings, includeNewFolders=Fa
             else:
                 #First match on country
                 for k,v in crowdinMappings.iteritems():
-                    if k.startswith(country):
+                    if k.startswith(country) and crowdinMappings[k] is not None:
                         mappingDict[lc] = crowdinMappings[k]
                         crowdinMappings[k] = None
                         break
