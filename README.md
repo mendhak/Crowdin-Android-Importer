@@ -84,7 +84,7 @@ The working directory is the path to where you downloaded the importer script.  
 
 Program: `python`
 
-Parameters: `crowdin.py -p -a update $FilePath$ -k b2b6e1b0672a280a37d66ec405d378e5 -i testing-the-api`
+Parameters: `crowdin.py -p $FilePath$ -a update -k b2b6e1b0672a280a37d66ec405d378e5 -i testing-the-api`
 
 Working directory: `/home/mendhak/Code/Crowdin-Android-Importer/`
 
